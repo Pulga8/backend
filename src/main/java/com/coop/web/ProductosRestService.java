@@ -5,24 +5,92 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coop.business.BusinessException;
 import com.coop.business.IProductoBusiness;
+import com.coop.business.NotFoundException;
 import com.coop.model.Producto;
 
 @RestController
 public class ProductosRestService {
 	@Autowired
 	private IProductoBusiness productoBusiness;
+
 	@GetMapping("/productos")
-	public ResponseEntity<List<Producto>> list() {
+	public ResponseEntity<List<Producto>> list(
+			@RequestParam(required=false,defaultValue="@*@",value="q") String parteDelNombre,
+			@RequestParam(required=false,defaultValue="-1",value="pdesde") double precioDesde,
+			@RequestParam(required=false,defaultValue="-1",value="phasta")double precioHasta) {
 		try {
-			return new ResponseEntity<List<Producto>>(productoBusiness.list(), HttpStatus.OK);
+			List<Producto> lista;
+			if(!parteDelNombre.equals("@*@")) {
+			lista=productoBusiness.list(parteDelNombre,0,0);
+			}else if (precioDesde!=-1 && precioHasta != -1) {
+				lista=productoBusiness.list(null,precioDesde,precioHasta);
+			}else {
+				lista=productoBusiness.list();
+			}
+			return new ResponseEntity<List<Producto>>(lista, HttpStatus.OK);
 		} catch (BusinessException e) {
 			return new ResponseEntity<List<Producto>>(HttpStatus.INTERNAL_SERVER_ERROR);
 
 		}
 	}
+
+	@GetMapping("/productos/{id}")
+	public ResponseEntity<Producto> load(@PathVariable("id") long id) {
+		try {
+			return new ResponseEntity<Producto>(productoBusiness.load(id), HttpStatus.OK);
+		} catch (BusinessException e) {
+			return new ResponseEntity<Producto>(HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (NotFoundException e) {
+			return new ResponseEntity<Producto>(HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@PutMapping("/productos")
+	public ResponseEntity<Producto> update(@RequestBody Producto producto) {
+		try {
+			return new ResponseEntity<Producto>(productoBusiness.update(producto), HttpStatus.OK);
+		} catch (BusinessException e) {
+			return new ResponseEntity<Producto>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+	}
+
+	@PostMapping("/productos")
+	public ResponseEntity<Producto> add(@RequestBody Producto producto) {
+		try {
+			return new ResponseEntity<Producto>(productoBusiness.add(producto), HttpStatus.CREATED);
+		} catch (BusinessException e) {
+			return new ResponseEntity<Producto>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+	}
+
+	@DeleteMapping("/productos/{id}")
+	public ResponseEntity<String> delete(@PathVariable("id") long id) {
+		try {
+			productoBusiness.delete(id);
+			return new ResponseEntity<String>(HttpStatus.OK);
+		} catch (BusinessException e) {
+			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+
 }
+
+//	GET /productos <--- Obtener lista de productos
+// GET /productos/{id} <--- Obtener un producto, cuyo id sea {id}	
+// POST /productos  <--- Agregar un nuevo producto	(va en el body
+// PUT //productos <--- Modificar un producto existente (va en el body)
+// DELETE /productos/{id} <---Elimina un producto, cuyo id sea {id}	
