@@ -17,16 +17,16 @@ public class ProductoBusiness implements IProductoBusiness {
 
 	@Override
 	public Producto load(long id) throws BusinessException, NotFoundException {
-		
+
 		Optional<Producto> o;
 		try {
 			o = productoDAO.findById(id);
 		} catch (Exception e) {
 			throw new BusinessException(e);
 		}
-		if(o.isPresent())
+		if (o.isPresent())
 			return o.get();
-		else 
+		else
 			throw new NotFoundException();
 	}
 
@@ -69,17 +69,17 @@ public class ProductoBusiness implements IProductoBusiness {
 
 	@Override
 	public List<Producto> list(String parteDelNombre, double precioDesde, double precioHasta) throws BusinessException {
-	try {
-		if(parteDelNombre!=null && parteDelNombre.trim().length()>2) {
-			return productoDAO.findByProductoLike("%"+parteDelNombre+"%");
-		}else if (precioDesde<=precioHasta && precioDesde>0){
-			return productoDAO.findByPrecioBetween(precioDesde, precioHasta);
-		}else {
-			throw new BusinessException("Parámetros incorrectos");
+		try {
+			if (parteDelNombre != null && parteDelNombre.trim().length() > 2) {
+				return productoDAO.findByProductoLike("%" + parteDelNombre + "%");
+			} else if (precioDesde <= precioHasta && precioDesde > 0) {
+				return productoDAO.findByPrecioBetween(precioDesde, precioHasta);
+			} else {
+				throw new BusinessException("Parámetros incorrectos");
+			}
+		} catch (Exception e) {
+			throw new BusinessException(e);
 		}
-	} catch (Exception e) {
-		throw new BusinessException(e);
-	}
 	}
 
 }

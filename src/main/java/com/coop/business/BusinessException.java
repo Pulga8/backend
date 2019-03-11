@@ -2,6 +2,9 @@ package com.coop.business;
 
 public class BusinessException extends Exception {
 
+
+	private static final long serialVersionUID = 4881503605848878949L;
+
 	public BusinessException() {
 		// TODO Auto-generated constructor stub
 	}

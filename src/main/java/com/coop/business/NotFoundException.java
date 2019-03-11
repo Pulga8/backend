@@ -2,6 +2,9 @@ package com.coop.business;
 
 public class NotFoundException extends Exception {
 
+
+	private static final long serialVersionUID = 2313714652888968997L;
+
 	public NotFoundException() {
 		// TODO Auto-generated constructor stub
 	}
