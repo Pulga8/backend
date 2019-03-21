@@ -19,6 +19,7 @@ import com.coop.business.BusinessException;
 import com.coop.business.IProductoBusiness;
 import com.coop.business.NotFoundException;
 import com.coop.model.Producto;
+import com.coop.model.dto.ProductoSintetico;
 
 @RestController
 @RequestMapping(Constantes.URL_API_PRODUCTOS)
@@ -28,17 +29,17 @@ public class ProductosRestService {
 
 	@GetMapping("")
 	public ResponseEntity<List<Producto>> list(
-			@RequestParam(required=false,defaultValue="@*@",value="q") String parteDelNombre,
-			@RequestParam(required=false,defaultValue="-1",value="pdesde") double precioDesde,
-			@RequestParam(required=false,defaultValue="-1",value="phasta")double precioHasta) {
+			@RequestParam(required = false, defaultValue = "@*@", value = "q") String parteDelNombre,
+			@RequestParam(required = false, defaultValue = "-1", value = "pdesde") double precioDesde,
+			@RequestParam(required = false, defaultValue = "-1", value = "phasta") double precioHasta) {
 		try {
 			List<Producto> lista;
-			if(!parteDelNombre.equals("@*@")) {
-			lista=productoBusiness.list(parteDelNombre,0,0);
-			}else if (precioDesde!=-1 && precioHasta != -1) {
-				lista=productoBusiness.list(null,precioDesde,precioHasta);
-			}else {
-				lista=productoBusiness.list();
+			if (!parteDelNombre.equals("@*@")) {
+				lista = productoBusiness.list(parteDelNombre, 0, 0);
+			} else if (precioDesde != -1 && precioHasta != -1) {
+				lista = productoBusiness.list(null, precioDesde, precioHasta);
+			} else {
+				lista = productoBusiness.list();
 			}
 			return new ResponseEntity<List<Producto>>(lista, HttpStatus.OK);
 		} catch (BusinessException e) {
@@ -87,8 +88,27 @@ public class ProductosRestService {
 			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
 
+	@GetMapping("/sintetico")
+	public ResponseEntity<List<ProductoSintetico>> listadoSintetico(@RequestParam(value = "precio_minimo") double precioMinimo) {
+		try {
+
+			return new ResponseEntity<List<ProductoSintetico>>(productoBusiness.listadoSintetico(precioMinimo), HttpStatus.OK);
+		} catch (BusinessException e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<ProductoSintetico>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	};
+
+	@GetMapping("/cantidad_mas_caros_que")
+	public ResponseEntity<Long> cantidadProductosMasCarosQue(
+			@RequestParam(value = "precio_minimo") double precioMinimo) {
+		try {
+			return new ResponseEntity<Long>(productoBusiness.cantidadProductosMasCarosQue(precioMinimo), HttpStatus.OK);
+		} catch (BusinessException e) {
+			return new ResponseEntity<Long>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }
 
 //	GET /productos <--- Obtener lista de productos

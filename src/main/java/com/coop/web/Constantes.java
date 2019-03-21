@@ -9,5 +9,6 @@ public final class Constantes {
 	
 	public static final String URL_API_PRODUCTOS=URL_API_BASE+"/productos";
 	public static final String URL_API_USUARIOS=URL_API_BASE+"/usuarios";
+	public static final String URL_CORE=URL_API_BASE+"/core";
 	
 }
