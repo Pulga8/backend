@@ -13,12 +13,18 @@ public interface IProductoBusiness {
 	public void delete(long id) throws BusinessException;
 
 	public Producto update(Producto producto) throws BusinessException;
-	
+
 	public List<Producto> list() throws BusinessException;
-	
-	public List<Producto> list(String parteDelNombre,double precioDesde,double precioHasta) throws BusinessException;
-	
-	public List<ProductoSintetico> listadoSintetico(double precioMinimo)throws BusinessException;
-	
+
+	public List<Producto> list(String parteDelNombre, double precioDesde, double precioHasta) throws BusinessException;
+
+	public List<ProductoSintetico> listadoSintetico(double precioMinimo) throws BusinessException;
+
 	public Long cantidadProductosMasCarosQue(double precioMinimo) throws BusinessException;
+
+	public int updatePrecio(double precio, long id) throws BusinessException;
+
+	public List<Producto> listPageable(int pagina, int tamanio) throws BusinessException;
+
+	public List<Producto> listSortable() throws BusinessException;
 }
